@@ -1,0 +1,50 @@
+* {
+    box-sizing: border-box;
+    padding:0;
+    margin:0;
+}
+
+/** x 1.40157480315 **/
+.card {
+    transition:0.1s ease-in-out;
+    display:inline-block;
+    margin:8px;
+    width:100px;
+    height:153px;
+    background-size:104px 155px;
+    background-position:center;
+    background-image: url("../img/red_back.png");
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    border-radius:10px;
+    background-color:black;
+}
+
+.card:hover {
+    transition:0.1s ease-in-out;
+    margin:4px;
+    width:106px;
+    height:159px;
+    background-size:110px 161px;
+    box-shadow: 4px 4px 3px rgba(0,0,0,0.4);
+}
+
+#container {
+    width:100%;
+    max-width:1568px;
+    display:block;
+    margin:8px auto;
+}
+
+.flipped {
+    animation:flipped ease-in-out 0.3s;
+}
+
+@keyframes flipped {
+    0% {transform:scaleX(1);box-shadow: 5px 3px 4px rgba(0,0,0,0.5);}
+    50% {transform:scaleX(0);box-shadow: 4px 3px 5px rgba(0,0,0,0.4)}
+    100% {transform:scaleX(1);box-shadow: 3px 3px 4px rgba(0,0,0,0.5);}
+}
+
+.invis {
+    opacity: 0.4;
+}

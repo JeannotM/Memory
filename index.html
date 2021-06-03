@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/index.css" media="screen"/>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="js/pictures.js"></script>
+    <script src="js/vue.js" async></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id="container">
+        <div><p>Score: {{ score }}</p><p>Tijd: {{ time }}</p><button @click="resetGame">Reset</button></div>
+        <div class="card" v-for="id in sortedCards" v-bind:id="id" @click="flipCard"></div>
+    </div>
+</body>
+</html>
