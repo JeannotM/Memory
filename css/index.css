@@ -1,10 +1,15 @@
 * {
+    font-family: Arial, Helvetica, sans-serif;
     box-sizing: border-box;
     padding:0;
     margin:0;
 }
 
-/** x 1.40157480315 **/
+.share-button {
+    width:64px;
+    height:64px;
+}
+
 .card {
     transition:0.1s ease-in-out;
     display:inline-block;
@@ -21,7 +26,7 @@
 
 .card:hover {
     transition:0.1s ease-in-out;
-    margin:4px;
+    margin:5px;
     width:106px;
     height:159px;
     background-size:110px 161px;
@@ -29,6 +34,8 @@
 }
 
 #container {
+    top:0px;
+    position:relative;
     width:100%;
     max-width:1568px;
     display:block;
@@ -39,6 +46,49 @@
     animation:flipped ease-in-out 0.3s;
 }
 
+.on-screen {
+    width:320px;
+    height:400px;
+    background-color:white;
+    box-shadow: 0px 0px 500px black;
+    display:block;
+    position:relative;
+    margin:80px auto;
+    z-index: 200;
+}
+
+.on-screen h1{
+    text-align: center;
+    padding:4px;
+}
+
+.on-screen p {
+    padding:8px;
+}
+
+.on-screen img.gif {
+    width:300px;
+    margin:10px;
+    left:0;
+    position:absolute;
+    bottom:0;
+}
+
+#dark-bg {
+    background-color:rgba(0, 0, 0, 0.5);
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    display:block;
+    position:absolute;
+    z-index: 199;
+}
+
+button, #dark-bg, .card {
+    cursor: pointer;
+}
+
 @keyframes flipped {
     0% {transform:scaleX(1);box-shadow: 5px 3px 4px rgba(0,0,0,0.5);}
     50% {transform:scaleX(0);box-shadow: 4px 3px 5px rgba(0,0,0,0.4)}
@@ -47,4 +97,24 @@
 
 .invis {
     opacity: 0.4;
+}
+
+.d-none {
+    display:none !important;
+}
+
+#itemContainer{
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+}
+#itemContainer div{
+    display:flex;
+    flex-direction: row;
+    margin: 2px 20px;
+}
+#itemContainer div p, #itemContainer div button {
+    margin:2px;
+    padding:2px 4px;
+    font-size:24px;
 }

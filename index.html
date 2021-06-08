@@ -11,8 +11,20 @@
     <title>Document</title>
 </head>
 <body>
+    <div id="dark-bg" @click="toggleTutorial">
+        <div class="on-screen">
+            <h1>Regels</h1>
+            <p>Klik op de kaarten met de linkermuisknop om ze te draaien<br><br>Je krijgt 20 punten als je 4 dezelfde kaarten hebt gevonden<br><br>Er gaat telkens 1 punt af als je een foute combinatie hebt geklikt
+            <img class="gif" src="img/click_card.gif"></p>
+        </div>
+        <div class="on-screen d-none">
+            <h1>Gefeliciteerd!</h1>
+            <p>U heeft de quiz in {{ time }} gehaald met {{ score }} punten!<br><br>Deel uw score nu online!. <p>
+            <img class="share-button" src="img/tweet.jpg" @click="shareButton('tweet')">
+        </div>
+    </div>
     <div id="container">
-        <div><p>Score: {{ score }}</p><p>Tijd: {{ time }}</p><button @click="resetGame">Reset</button></div>
+        <div id="itemContainer"><div><p>Score: {{ score }}</p><p>Tijd: {{ time }}</p></div><div><button @click="resetGame">Reset</button><button @click="toggleTutorial">Bekijk Regels</button></div></div>
         <div class="card" v-for="id in sortedCards" v-bind:id="id" @click="flipCard"></div>
     </div>
 </body>

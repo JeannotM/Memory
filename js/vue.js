@@ -15,6 +15,8 @@ const app = Vue.createApp({
         for(let i=0;i<pictures.length;i++){
             this.randomizedCards.push(i)
             this.sortedCards.push(i)
+            this.removedCards.push(i)
+            this.removedCards.push(i)
         }
         this.shuffleCards(this.randomizedCards)
         this.startCounter()
@@ -49,7 +51,6 @@ const app = Vue.createApp({
                 setTimeout(function(){
                     el.target.style.backgroundImage="url(img/"+pictures[self.randomizedCards[el.target.id]].img+".png)"
                 }, 150)
-                console.log(this.flippedCards.length)
                 if(this.flippedCards.length != 0 && this.flippedCards.indexOf(pictures[this.randomizedCards[el.target.id]].type) == -1) {
                     this.blocked = true
                     setTimeout(function() {
@@ -76,6 +77,10 @@ const app = Vue.createApp({
                     
                     this.flippedCards = []
                 }
+
+                if(this.removedCards.length >= 52){
+                    this.wonGame();
+                }
             }
         },
         shuffleCards(a) {
@@ -101,17 +106,43 @@ const app = Vue.createApp({
         },
         startCounter(){
             const self = this
+            this.toggleTutorial
             setInterval(function(){
                 self.seconds = parseInt(self.seconds) + 1;
                 if (self.seconds > 59) {
                     self.minutes += 1;
-                    self.seconds = 0;
+                    self.seconds = "00";
                 } else if (self.seconds < 10) {
                     self.seconds = "0" + self.seconds;
                 }
+                document.cookie = encodeURIComponent("save") + '=' + encodeURIComponent({
+                    "score": this.score,
+                    "seconds": this.seconds,
+                    "minutes": this.minutes,
+                    "cardLayout": this.randomizedCards,
+                    "cardRemoved": this.removedCards
+                }) + "; path=/; expires="+new Date(Date.now() + 7).toUTCString()
             }, 999.9)
+        },
+        toggleTutorial() {
+            document.getElementById("dark-bg").classList.toggle("d-none");
+        },
+        wonGame() {
+            document.getElementById("dark-bg").classList.toggle("d-none");
+            document.getElementById("dark-bg").removeEventListener('click', this);
+            document.getElementsByClassName("on-screen")[0].classList.toggle("d-none");
+            document.getElementsByClassName("on-screen")[1].classList.toggle("d-none");
+
+            
+        },
+        shareButton(type){
+            var strtwt = "Wow, ik heb zojuist " + this.score + " punten van 260 gescoord in " + this.time + " op een te gekke memory game!";
+            if(type == "tweet"){
+                window.open("https://twitter.com/intent/tweet?text=" + encodeURI(strtwt));
+            }
+            
         }
     }
-})
+})  
 
-app.mount("#container")
+app.mount("body")
