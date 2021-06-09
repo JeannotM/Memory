@@ -15,15 +15,34 @@ const app = Vue.createApp({
         for(let i=0;i<pictures.length;i++){
             this.randomizedCards.push(i)
             this.sortedCards.push(i)
-            this.removedCards.push(i)
-            this.removedCards.push(i)
         }
         this.shuffleCards(this.randomizedCards)
+
+        if(this.getCookie("save")){
+            var save = JSON.parse(atob(this.getCookie("save")))
+            this.score = save.score
+            this.seconds = save.seconds
+            this.minutes = save.minutes
+            this.randomizedCards = save.cardLayout
+            this.removedCards = save.cardRemoved
+
+            setTimeout(function(){
+                for(let i=0;i<save.cardRemoved.length;i++) {
+                    let card = document.getElementsByClassName("card")[parseInt(save.cardRemoved[i])]
+                    card.classList.add("invis")
+                    card.style.backgroundImage="url(img/"+pictures[save.cardLayout[parseInt(save.cardRemoved[i])]].img+".png)"
+                }
+            }, 100)
+            
+        }
+        
         this.startCounter()
         var tmpArr = {}
         for(let i=0;i<this.randomizedCards.length;i++){
             tmpArr[i] = pictures[this.randomizedCards[i]].type
         }
+
+        console.log(save)
         console.log(tmpArr)
     },
     computed: {
@@ -45,7 +64,6 @@ const app = Vue.createApp({
         flipCard(el) {
             if(this.blocked == false){
                 if(this.removedCards.indexOf(el.target.id) != -1 || el.target.classList.contains("flipped") ){ return }
-                console.log(el.target.id)
                 el.target.classList.add("flipped")
                 const self = this
                 setTimeout(function(){
@@ -115,13 +133,13 @@ const app = Vue.createApp({
                 } else if (self.seconds < 10) {
                     self.seconds = "0" + self.seconds;
                 }
-                document.cookie = encodeURIComponent("save") + '=' + encodeURIComponent({
-                    "score": this.score,
-                    "seconds": this.seconds,
-                    "minutes": this.minutes,
-                    "cardLayout": this.randomizedCards,
-                    "cardRemoved": this.removedCards
-                }) + "; path=/; expires="+new Date(Date.now() + 7).toUTCString()
+                self.setCookie("save", btoa(JSON.stringify({
+                    "score": self.score,
+                    "seconds": self.seconds,
+                    "minutes": self.minutes,
+                    "cardLayout": self.randomizedCards,
+                    "cardRemoved": self.removedCards
+                })), 7)
             }, 999.9)
         },
         toggleTutorial() {
@@ -132,15 +150,34 @@ const app = Vue.createApp({
             document.getElementById("dark-bg").removeEventListener('click', this);
             document.getElementsByClassName("on-screen")[0].classList.toggle("d-none");
             document.getElementsByClassName("on-screen")[1].classList.toggle("d-none");
-
-            
         },
         shareButton(type){
-            var strtwt = "Wow, ik heb zojuist " + this.score + " punten van 260 gescoord in " + this.time + " op een te gekke memory game!";
+            var str = "Wow, ik heb zojuist " + this.score + " punten van 260 gescoord in " + this.time + " op een te gekke memory game!";
             if(type == "tweet"){
-                window.open("https://twitter.com/intent/tweet?text=" + encodeURI(strtwt));
+                window.open("https://twitter.com/intent/tweet?text=" + encodeURI(str));
             }
             
+        },
+        getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i=0; i <ca.length; i++) {
+              var c = ca[i];
+              while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+              }
+              if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+              }
+            }
+            return "";
+        },
+        setCookie(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            var expires = "expires="+d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
         }
     }
 })  
