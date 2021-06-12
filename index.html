@@ -25,7 +25,7 @@
     </div>
     <div id="container">
         <div id="itemContainer"><div><p>Score: {{ score }}</p><p>Tijd: {{ time }}</p></div><div><button @click="resetGame">Reset</button><button @click="toggleTutorial">Bekijk Regels</button></div></div>
-        <div class="card" v-for="id in sortedCards" v-bind:id="id" @click="flipCard"></div>
+        <div class="card" v-for="id in randomizedCards" v-bind:id="id" @click="flipCard"></div>
     </div>
 </body>
 </html>

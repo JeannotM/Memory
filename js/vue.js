@@ -2,9 +2,9 @@ const app = Vue.createApp({
     data() {
         return {
             randomizedCards: [],
-            sortedCards: [],
             flippedCards: [],
             removedCards: [],
+            wonGameStatus: false,
             score: 0,
             seconds: "00",
             minutes: 0,
@@ -14,10 +14,10 @@ const app = Vue.createApp({
     created() {
         for(let i=0;i<pictures.length;i++){
             this.randomizedCards.push(i)
-            this.sortedCards.push(i)
         }
         this.shuffleCards(this.randomizedCards)
 
+        // Will use your saved data if it's available
         if(this.getCookie("save")){
             var save = JSON.parse(atob(this.getCookie("save")))
             this.score = save.score
@@ -32,18 +32,11 @@ const app = Vue.createApp({
                     card.classList.add("invis")
                     card.style.backgroundImage="url(img/"+pictures[save.cardLayout[parseInt(save.cardRemoved[i])]].img+".png)"
                 }
-            }, 100)
+            }, 50)
             
         }
         
         this.startCounter()
-        var tmpArr = {}
-        for(let i=0;i<this.randomizedCards.length;i++){
-            tmpArr[i] = pictures[this.randomizedCards[i]].type
-        }
-
-        console.log(save)
-        console.log(tmpArr)
     },
     computed: {
         time() {
@@ -51,6 +44,7 @@ const app = Vue.createApp({
         }
     },
     methods: {
+        /** Unflip all the cards, clear the arrays and give an error message */
         unflipAllCards() {
             alert("Oopsie, looks like that wasn't right.")
             while(document.getElementsByClassName("flipped").length > 0) {
@@ -61,6 +55,7 @@ const app = Vue.createApp({
             this.flippedCards = []
             this.blocked = false
         },
+        /** Flips a single card if it's the same type as other flipped cards */
         flipCard(el) {
             if(this.blocked == false){
                 if(this.removedCards.indexOf(el.target.id) != -1 || el.target.classList.contains("flipped") ){ return }
@@ -78,8 +73,9 @@ const app = Vue.createApp({
 
                 this.flippedCards.push(pictures[this.randomizedCards[el.target.id]].type)
 
+                // Flips the cards and gives you 20 points if you get 4 cards of the same type
                 if (this.flippedCards.length >= 4) {
-                    this.score += 4
+                    this.score += 20
                     for(let i=1;i<this.flippedCards.length;i++){
                         if(this.flippedCards[i-1] == this.flippedCards[i]){
                             continue
@@ -92,7 +88,6 @@ const app = Vue.createApp({
                         document.getElementsByClassName("flipped")[0].classList.add("invis")
                         document.getElementsByClassName("flipped")[0].classList.remove("flipped")
                     }
-                    
                     this.flippedCards = []
                 }
 
@@ -107,7 +102,9 @@ const app = Vue.createApp({
                 [a[i], a[j]] = [a[j], a[i]];
             }
         },
+        /** Resets the score, empties the arrays and reshuffles the cards */
         resetGame(){
+            document.getElementById("dark-bg").classList.add("d-none");
             while(document.getElementsByClassName("flipped").length > 0) {
                 document.getElementsByClassName("flipped")[0].removeAttribute("style")
                 document.getElementsByClassName("flipped")[0].classList.remove("flipped")
@@ -121,7 +118,10 @@ const app = Vue.createApp({
             this.score = 0
             this.seconds = "00"
             this.minutes = 0
+            document.getElementsByClassName("on-screen")[0].classList.remove("d-none");
+            document.getElementsByClassName("on-screen")[1].classList.add("d-none");
         },
+        /** Adds 1 second to the timer every second, also saves a cookie with save data */
         startCounter(){
             const self = this
             this.toggleTutorial
@@ -142,15 +142,22 @@ const app = Vue.createApp({
                 })), 7)
             }, 999.9)
         },
+        /** Toggles the tutorial screen, unless you have won the game */
         toggleTutorial() {
-            document.getElementById("dark-bg").classList.toggle("d-none");
+            if(this.wonGameStatus == false) {
+                document.getElementById("dark-bg").classList.toggle("d-none");
+            }
         },
+        /** Swaps the tutorial screen for the "won game" screen and opens it*/
         wonGame() {
-            document.getElementById("dark-bg").classList.toggle("d-none");
-            document.getElementById("dark-bg").removeEventListener('click', this);
-            document.getElementsByClassName("on-screen")[0].classList.toggle("d-none");
-            document.getElementsByClassName("on-screen")[1].classList.toggle("d-none");
+            if(this.wonGameStatus == false) {
+                document.getElementById("dark-bg").classList.toggle("d-none");
+                document.getElementsByClassName("on-screen")[0].classList.add("d-none");
+                document.getElementsByClassName("on-screen")[1].classList.remove("d-none");
+                this.wonGameStatus = true
+            }
         },
+        /** to tweet or share your score (Typed in Dutch) */
         shareButton(type){
             var str = "Wow, ik heb zojuist " + this.score + " punten van 260 gescoord in " + this.time + " op een te gekke memory game!";
             if(type == "tweet"){
@@ -163,13 +170,13 @@ const app = Vue.createApp({
             var decodedCookie = decodeURIComponent(document.cookie);
             var ca = decodedCookie.split(';');
             for(var i=0; i <ca.length; i++) {
-              var c = ca[i];
-              while (c.charAt(0) == ' ') {
-                c = c.substring(1);
-              }
-              if (c.indexOf(name) == 0) {
-                return c.substring(name.length, c.length);
-              }
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
             }
             return "";
         },
@@ -180,6 +187,6 @@ const app = Vue.createApp({
             document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
         }
     }
-})  
+})
 
 app.mount("body")

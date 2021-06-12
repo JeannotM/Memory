@@ -1,3 +1,4 @@
+/** All the names and types for the cards */
 var pictures = [
     {
         "type": 2,
