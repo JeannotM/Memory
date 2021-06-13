@@ -1,0 +1,36 @@
+main {
+    grid-area: main;
+    border-width: 1px;
+    border-style: solid;
+    border-color: red;
+}
+
+.testscript {
+    border-collapse: collapse;
+    margin: 10px;
+}
+
+.testscript th, .testscript td {
+    border: 1px solid #000000;
+    vertical-align: top;
+    padding: 5px 10px 5px 10px;
+}
+
+.testscript ul {
+    margin: 0;
+}
+
+.testscript li, .testscript span {
+    margin: 8px 0;
+}
+
+.testscript span {
+    display: block;
+    margin: 8px 0;
+}
+
+.documentation-link {
+    position: fixed;
+    bottom: 5px;
+    right: 5px;
+}

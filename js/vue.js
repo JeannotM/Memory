@@ -7,6 +7,8 @@ const app = Vue.createApp({
             msgWindow: document.getElementById("msgWindow"),
             flippedCards: [],
             removedCards: [],
+            counter: [],
+            sorted: [],
             wonGameStatus: false,
             score: 0,
             seconds: "00",
@@ -15,11 +17,16 @@ const app = Vue.createApp({
         };
     },
     created() {
+        var arr = {};
         for(let i=0;i<pictures.length;i++){
             this.randomizedCards.push(i);
+            this.sorted.push(i)
         }
         this.shuffleCards(this.randomizedCards);
-
+        for(let i=0;i<pictures.length;i++){
+            arr[i] = pictures[this.randomizedCards[i]].type;
+        }
+        console.log(arr)
         // Will use your saved data if it's available
         if(this.getCookie("save")){
             var save = JSON.parse(atob(this.getCookie("save")));
@@ -37,7 +44,6 @@ const app = Vue.createApp({
                 }
             }, 100);
         }
-        
         this.startCounter();
     },
     computed: {
@@ -70,7 +76,7 @@ const app = Vue.createApp({
                     this.blocked = true;
                     setTimeout(function() {
                         self.unflipAllCards();
-                    }, 600);
+                    }, 400);
                 }
 
                 this.flippedCards.push(pictures[this.randomizedCards[el.target.id]].type);
@@ -99,6 +105,7 @@ const app = Vue.createApp({
                 }
             }
         },
+        /** Sends a random message */
         randomMessage(won) {
             if(won) {
                 msgWindow.textContent = this.compliment[parseInt(this.compliment.length * Math.random())]
@@ -140,7 +147,7 @@ const app = Vue.createApp({
         startCounter(){
             const self = this;
             this.toggleTutorial;
-            setInterval(function(){
+            this.counter = setInterval(function(){
                 self.seconds = parseInt(self.seconds) + 1;
                 if (self.seconds > 59) {
                     self.minutes += 1;
@@ -161,11 +168,19 @@ const app = Vue.createApp({
         toggleTutorial() {
             if(this.wonGameStatus == false) {
                 document.getElementById("dark-bg").classList.toggle("d-none");
+            } else {
+                document.getElementById("dark-bg").classList.toggle("d-none");
+                document.getElementsByClassName("on-screen")[0].classList.remove("d-none");
+                document.getElementsByClassName("on-screen")[1].classList.add("d-none");
+                this.wonGameStatus = false;
+                this.resetGame();
+                this.startCounter();
             }
         },
         /** Swaps the tutorial screen for the "won game" screen and opens it*/
         wonGame() {
             if(this.wonGameStatus == false) {
+                clearInterval(this.counter);
                 document.getElementById("dark-bg").classList.toggle("d-none");
                 document.getElementsByClassName("on-screen")[0].classList.add("d-none");
                 document.getElementsByClassName("on-screen")[1].classList.remove("d-none");

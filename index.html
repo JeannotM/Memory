@@ -8,6 +8,7 @@
     <script src="https://unpkg.com/vue@next"></script>
     <script src="js/pictures.js"></script>
     <script src="js/vue.js" async></script>
+    <script src="js/ai.js" async></script>
     <title>Document</title>
 </head>
 <body>
@@ -21,12 +22,12 @@
         <div class="on-screen d-none">
             <h1>Gefeliciteerd!</h1>
             <p>U heeft de quiz in {{ time }} gehaald met {{ score }} punten!<br><br>Deel uw score nu online!. <p>
-            <img class="share-button" src="img/tweet.jpg" alt="tweet" @click="shareButton('tweet')"><button>Opnieuw spelen</button>
+            <img class="share-button" src="img/tweet.jpg" alt="tweet" @click="shareButton('tweet')"><button @click="resetGame">Opnieuw spelen</button>
         </div>
     </div>
     <div id="container">
         <div id="itemContainer"><div><p>Score: {{ score }}</p><p>Tijd: {{ time }}</p></div><div><button @click="resetGame">Reset</button><button @click="toggleTutorial">Bekijk Regels</button></div></div>
-        <div class="card" v-for="id in randomizedCards" v-bind:id="id" @click="flipCard"></div>
+        <div class="card" v-for="id in sorted" v-bind:id="id" @click="flipCard"></div>
     </div>
 </body>
 </html>
