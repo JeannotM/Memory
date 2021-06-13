@@ -2,6 +2,9 @@ const app = Vue.createApp({
     data() {
         return {
             randomizedCards: [],
+            compliment: ["Goedzo!", "Goed gedaan!", "Nice!", "Klopt helemaal!", "Ik ben trots op jou!", "Slimme koekie hoor!", "DAYUMM!!!", "Zoinks!", "Wouwiieee"],
+            error: ["Dat klopt niet", "Oopsie", "Uh oh", "Hmmmmm", "Ietsjes anders", "Niet helemaal", "Niet opgeven!", "Bijna!", "Dichtbij!"],
+            msgWindow: document.getElementById("msgWindow"),
             flippedCards: [],
             removedCards: [],
             wonGameStatus: false,
@@ -9,92 +12,104 @@ const app = Vue.createApp({
             seconds: "00",
             minutes: 0,
             blocked: false
-        }
+        };
     },
     created() {
         for(let i=0;i<pictures.length;i++){
-            this.randomizedCards.push(i)
+            this.randomizedCards.push(i);
         }
-        this.shuffleCards(this.randomizedCards)
+        this.shuffleCards(this.randomizedCards);
 
         // Will use your saved data if it's available
         if(this.getCookie("save")){
-            var save = JSON.parse(atob(this.getCookie("save")))
-            this.score = save.score
-            this.seconds = save.seconds
-            this.minutes = save.minutes
-            this.randomizedCards = save.cardLayout
-            this.removedCards = save.cardRemoved
+            var save = JSON.parse(atob(this.getCookie("save")));
+            this.score = save.score;
+            this.seconds = save.seconds;
+            this.minutes = save.minutes;
+            this.randomizedCards = save.cardLayout;
+            this.removedCards = save.cardRemoved;
 
             setTimeout(function(){
                 for(let i=0;i<save.cardRemoved.length;i++) {
-                    let card = document.getElementsByClassName("card")[parseInt(save.cardRemoved[i])]
-                    card.classList.add("invis")
-                    card.style.backgroundImage="url(img/"+pictures[save.cardLayout[parseInt(save.cardRemoved[i])]].img+".png)"
+                    let card = document.getElementsByClassName("card")[parseInt(save.cardRemoved[i])];
+                    card.classList.add("invis");
+                    card.style.backgroundImage="url(img/"+pictures[save.cardLayout[parseInt(save.cardRemoved[i])]].img+".png)";
                 }
-            }, 50)
-            
+            }, 100);
         }
         
-        this.startCounter()
+        this.startCounter();
     },
     computed: {
         time() {
-            return this.minutes+":"+this.seconds
+            return this.minutes+":"+this.seconds;
         }
     },
     methods: {
         /** Unflip all the cards, clear the arrays and give an error message */
         unflipAllCards() {
-            alert("Oopsie, looks like that wasn't right.")
+            this.randomMessage(false);
             while(document.getElementsByClassName("flipped").length > 0) {
-                document.getElementsByClassName("flipped")[0].removeAttribute("style")
-                document.getElementsByClassName("flipped")[0].classList.remove("flipped")
+                document.getElementsByClassName("flipped")[0].removeAttribute("style");
+                document.getElementsByClassName("flipped")[0].classList.remove("flipped");
             }
-            if(this.score > 0){this.score -= 1}
-            this.flippedCards = []
-            this.blocked = false
+            if(this.score > 0){this.score -= 1; }
+            this.flippedCards = [];
+            this.blocked = false;
         },
         /** Flips a single card if it's the same type as other flipped cards */
         flipCard(el) {
             if(this.blocked == false){
-                if(this.removedCards.indexOf(el.target.id) != -1 || el.target.classList.contains("flipped") ){ return }
-                el.target.classList.add("flipped")
-                const self = this
+                if(this.removedCards.indexOf(el.target.id) != -1 || el.target.classList.contains("flipped") ){ return; }
+                el.target.classList.add("flipped");
+                const self = this;
                 setTimeout(function(){
-                    el.target.style.backgroundImage="url(img/"+pictures[self.randomizedCards[el.target.id]].img+".png)"
-                }, 150)
+                    el.target.style.backgroundImage="url(img/"+pictures[self.randomizedCards[el.target.id]].img+".png)";
+                }, 150);
                 if(this.flippedCards.length != 0 && this.flippedCards.indexOf(pictures[this.randomizedCards[el.target.id]].type) == -1) {
-                    this.blocked = true
+                    this.blocked = true;
                     setTimeout(function() {
-                        self.unflipAllCards()
-                    }, 600)
+                        self.unflipAllCards();
+                    }, 600);
                 }
 
-                this.flippedCards.push(pictures[this.randomizedCards[el.target.id]].type)
+                this.flippedCards.push(pictures[this.randomizedCards[el.target.id]].type);
 
                 // Flips the cards and gives you 20 points if you get 4 cards of the same type
                 if (this.flippedCards.length >= 4) {
-                    this.score += 20
+                    this.score += 20;
                     for(let i=1;i<this.flippedCards.length;i++){
                         if(this.flippedCards[i-1] == this.flippedCards[i]){
-                            continue
+                            continue;
                         }
-                        this.unflipAllCards()
-                        return
+                        this.unflipAllCards();
+                        return;
                     }
                     while(document.getElementsByClassName("flipped").length > 0) {
-                        this.removedCards.push(document.getElementsByClassName("flipped")[0].getAttribute("id"))
-                        document.getElementsByClassName("flipped")[0].classList.add("invis")
-                        document.getElementsByClassName("flipped")[0].classList.remove("flipped")
+                        this.removedCards.push(document.getElementsByClassName("flipped")[0].getAttribute("id"));
+                        document.getElementsByClassName("flipped")[0].classList.add("invis");
+                        document.getElementsByClassName("flipped")[0].classList.remove("flipped");
                     }
-                    this.flippedCards = []
+                    this.randomMessage(true);
+                    this.flippedCards = [];
                 }
 
                 if(this.removedCards.length >= 52){
                     this.wonGame();
                 }
             }
+        },
+        randomMessage(won) {
+            if(won) {
+                msgWindow.textContent = this.compliment[parseInt(this.compliment.length * Math.random())]
+            } else {
+                msgWindow.textContent = this.error[parseInt(this.error.length * Math.random())]
+            }
+            
+            msgWindow.classList.add("active"), 
+            setTimeout(function () { 
+                msgWindow.classList.remove("active"); 
+            }, 1200); 
         },
         shuffleCards(a) {
             for(let i=a.length-1;i>0;i--){
@@ -106,25 +121,25 @@ const app = Vue.createApp({
         resetGame(){
             document.getElementById("dark-bg").classList.add("d-none");
             while(document.getElementsByClassName("flipped").length > 0) {
-                document.getElementsByClassName("flipped")[0].removeAttribute("style")
-                document.getElementsByClassName("flipped")[0].classList.remove("flipped")
+                document.getElementsByClassName("flipped")[0].removeAttribute("style");
+                document.getElementsByClassName("flipped")[0].classList.remove("flipped");
             }
             while(document.getElementsByClassName("invis").length > 0) {
-                document.getElementsByClassName("invis")[0].removeAttribute("style")
-                document.getElementsByClassName("invis")[0].classList.remove("invis")
+                document.getElementsByClassName("invis")[0].removeAttribute("style");
+                document.getElementsByClassName("invis")[0].classList.remove("invis");
             }
-            this.shuffleCards(this.randomizedCards)
-            this.removedCards = []
-            this.score = 0
-            this.seconds = "00"
-            this.minutes = 0
+            this.shuffleCards(this.randomizedCards);
+            this.removedCards = [];
+            this.score = 0;
+            this.seconds = "00";
+            this.minutes = 0;
             document.getElementsByClassName("on-screen")[0].classList.remove("d-none");
             document.getElementsByClassName("on-screen")[1].classList.add("d-none");
         },
         /** Adds 1 second to the timer every second, also saves a cookie with save data */
         startCounter(){
-            const self = this
-            this.toggleTutorial
+            const self = this;
+            this.toggleTutorial;
             setInterval(function(){
                 self.seconds = parseInt(self.seconds) + 1;
                 if (self.seconds > 59) {
@@ -139,8 +154,8 @@ const app = Vue.createApp({
                     "minutes": self.minutes,
                     "cardLayout": self.randomizedCards,
                     "cardRemoved": self.removedCards
-                })), 7)
-            }, 999.9)
+                })), 7);
+            }, 999.9);
         },
         /** Toggles the tutorial screen, unless you have won the game */
         toggleTutorial() {
@@ -154,7 +169,7 @@ const app = Vue.createApp({
                 document.getElementById("dark-bg").classList.toggle("d-none");
                 document.getElementsByClassName("on-screen")[0].classList.add("d-none");
                 document.getElementsByClassName("on-screen")[1].classList.remove("d-none");
-                this.wonGameStatus = true
+                this.wonGameStatus = true;
             }
         },
         /** to tweet or share your score (Typed in Dutch) */
@@ -167,8 +182,7 @@ const app = Vue.createApp({
         },
         getCookie(cname) {
             var name = cname + "=";
-            var decodedCookie = decodeURIComponent(document.cookie);
-            var ca = decodedCookie.split(';');
+            var ca = decodeURIComponent(document.cookie).split(';');
             for(var i=0; i <ca.length; i++) {
                 var c = ca[i];
                 while (c.charAt(0) == ' ') {
@@ -187,6 +201,6 @@ const app = Vue.createApp({
             document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
         }
     }
-})
+});
 
-app.mount("body")
+app.mount("body");

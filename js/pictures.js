@@ -157,4 +157,4 @@ var pictures = [
         "type": "Q",
         "img": "QS"
     }
-]
+];

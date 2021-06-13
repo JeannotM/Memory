@@ -103,6 +103,28 @@ button, #dark-bg, .card {
     display:none !important;
 }
 
+#msgWindow {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 100;
+    pointer-events: none;
+    font-size: 48px;
+    text-align: center;
+    padding-top: 15%;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0px 0px 15px black;
+    left: 0;
+    top: 0;
+    display: none;
+}
+
+#msgWindow.active {
+    animation: complimentAnim ease-in-out 1.25s;
+    display: block;
+}
+
 #itemContainer{
     display:flex;
     flex-direction: row;
@@ -117,4 +139,25 @@ button, #dark-bg, .card {
     margin:2px;
     padding:2px 4px;
     font-size:24px;
+}
+
+@keyframes complimentAnim {
+    0% {
+        font-size: 64px;
+        letter-spacing: -4px;
+        opacity: 0;
+        background: rgba(0, 0, 0, 0);
+    }
+    25% {
+        font-size: 80px;
+        letter-spacing: 0px;
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.15);
+    }
+    100% {
+        font-size: 64px;
+        letter-spacing: 8px;
+        opacity: 0;
+        background: rgba(0, 0, 0, 0);
+    }
 }
