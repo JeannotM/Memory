@@ -50,10 +50,19 @@ const app = Vue.createApp({
         /** Unflip all the cards, clear the arrays and give an error message */
         unflipAllCards() {
             while(document.getElementsByClassName("flipped").length > 0) {
-                document.getElementsByClassName("flipped")[0].removeAttribute("style");
-                document.getElementsByClassName("flipped")[0].classList.remove("flipped");
+                let item = document.getElementsByClassName("flipped")[0];
+                item.classList.remove("flipped");
+                setTimeout(function () {
+                    item.classList.add("unflip");
+                    setTimeout(function () {
+                        item.removeAttribute("style");
+                        setTimeout(function () {
+                            item.classList.remove("unflip");
+                        }, 150)
+                    }, 150)
+                }, 50);
             }
-            if(this.score > 0){this.score -= 1; }
+            if(this.score > 0){ this.score -= 1; }
             this.flippedCards = [];
             this.blocked = false;
         },

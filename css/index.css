@@ -44,6 +44,10 @@
     margin:8px auto;
 }
 
+.unflip {
+    animation:flipped ease-in-out 0.3s !important;
+}
+
 .flipped {
     animation:flipped ease-in-out 0.3s;
 }
@@ -131,9 +135,9 @@ button, #dark-bg, .card {
 }
 
 #bottomBtn {
-    font-size:36px;
+    font-size:32px;
     margin:16px 8px;
-    padding:4px 12px;
+    padding:6px 24px;
     display:block;
     bottom:0;
     position:absolute;
