@@ -151,9 +151,8 @@ const app = Vue.createApp({
             this.minutes = 0;
             this.onScreen[0].classList.remove("d-none");
             this.onScreen[1].classList.add("d-none");
-            document.getElementById("dark-bg").classList.toggle("d-none");
+            document.getElementById("dark-bg").classList.add("d-none");
             this.wonGameStatus = false;
-            this.startCounter();
         },
         /** Adds 1 second to the timer every second, also saves a cookie with save data */
         startCounter(){
