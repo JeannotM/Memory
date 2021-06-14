@@ -5,10 +5,10 @@ const app = Vue.createApp({
             compliment: ["Goedzo!", "Goed gedaan!", "Nice!", "Klopt helemaal!", "Ik ben trots op jou!", "Slimme koekie hoor!", "DAYUMM!!!", "Zoinks!", "Wouwiieee"],
             error: ["Dat klopt niet", "Oopsie", "Uh oh", "Hmmmmm", "Ietsjes anders", "Niet helemaal", "Niet opgeven!", "Bijna!", "Dichtbij!"],
             msgWindow: document.getElementById("msgWindow"),
+            onScreen: document.getElementsByClassName("on-screen"),
             flippedCards: [],
             removedCards: [],
             counter: [],
-            sorted: [],
             wonGameStatus: false,
             score: 0,
             seconds: "00",
@@ -17,16 +17,11 @@ const app = Vue.createApp({
         };
     },
     created() {
-        var arr = {};
         for(let i=0;i<pictures.length;i++){
             this.randomizedCards.push(i);
-            this.sorted.push(i)
         }
         this.shuffleCards(this.randomizedCards);
-        for(let i=0;i<pictures.length;i++){
-            arr[i] = pictures[this.randomizedCards[i]].type;
-        }
-        console.log(arr)
+
         // Will use your saved data if it's available
         if(this.getCookie("save")){
             var save = JSON.parse(atob(this.getCookie("save")));
@@ -54,7 +49,6 @@ const app = Vue.createApp({
     methods: {
         /** Unflip all the cards, clear the arrays and give an error message */
         unflipAllCards() {
-            this.randomMessage(false);
             while(document.getElementsByClassName("flipped").length > 0) {
                 document.getElementsByClassName("flipped")[0].removeAttribute("style");
                 document.getElementsByClassName("flipped")[0].classList.remove("flipped");
@@ -74,9 +68,10 @@ const app = Vue.createApp({
                 }, 150);
                 if(this.flippedCards.length != 0 && this.flippedCards.indexOf(pictures[this.randomizedCards[el.target.id]].type) == -1) {
                     this.blocked = true;
+                    this.randomMessage(false);
                     setTimeout(function() {
                         self.unflipAllCards();
-                    }, 400);
+                    }, 1400);
                 }
 
                 this.flippedCards.push(pictures[this.randomizedCards[el.target.id]].type);
@@ -88,6 +83,7 @@ const app = Vue.createApp({
                         if(this.flippedCards[i-1] == this.flippedCards[i]){
                             continue;
                         }
+                        this.randomMessage(false);
                         this.unflipAllCards();
                         return;
                     }
@@ -107,16 +103,20 @@ const app = Vue.createApp({
         },
         /** Sends a random message */
         randomMessage(won) {
-            if(won) {
-                msgWindow.textContent = this.compliment[parseInt(this.compliment.length * Math.random())]
-            } else {
-                msgWindow.textContent = this.error[parseInt(this.error.length * Math.random())]
-            }
-            
-            msgWindow.classList.add("active"), 
-            setTimeout(function () { 
-                msgWindow.classList.remove("active"); 
-            }, 1200); 
+            var self = this;
+            // Timeout is used so it doesn't feel to weird after getting a wrong combination
+            setTimeout(function() {
+                if(won) {
+                    msgWindow.textContent = self.compliment[parseInt(self.compliment.length * Math.random())];
+                } else {
+                    msgWindow.textContent = self.error[parseInt(self.error.length * Math.random())];
+                }
+
+                msgWindow.classList.add("active"), 
+                setTimeout(function () { 
+                    msgWindow.classList.remove("active"); 
+                }, 1100); 
+            }, 200);
         },
         shuffleCards(a) {
             for(let i=a.length-1;i>0;i--){
@@ -140,8 +140,11 @@ const app = Vue.createApp({
             this.score = 0;
             this.seconds = "00";
             this.minutes = 0;
-            document.getElementsByClassName("on-screen")[0].classList.remove("d-none");
-            document.getElementsByClassName("on-screen")[1].classList.add("d-none");
+            this.onScreen[0].classList.remove("d-none");
+            this.onScreen[1].classList.add("d-none");
+            document.getElementById("dark-bg").classList.toggle("d-none");
+            this.wonGameStatus = false;
+            this.startCounter();
         },
         /** Adds 1 second to the timer every second, also saves a cookie with save data */
         startCounter(){
@@ -161,20 +164,13 @@ const app = Vue.createApp({
                     "minutes": self.minutes,
                     "cardLayout": self.randomizedCards,
                     "cardRemoved": self.removedCards
-                })), 7);
+                })));
             }, 999.9);
         },
         /** Toggles the tutorial screen, unless you have won the game */
         toggleTutorial() {
             if(this.wonGameStatus == false) {
                 document.getElementById("dark-bg").classList.toggle("d-none");
-            } else {
-                document.getElementById("dark-bg").classList.toggle("d-none");
-                document.getElementsByClassName("on-screen")[0].classList.remove("d-none");
-                document.getElementsByClassName("on-screen")[1].classList.add("d-none");
-                this.wonGameStatus = false;
-                this.resetGame();
-                this.startCounter();
             }
         },
         /** Swaps the tutorial screen for the "won game" screen and opens it*/
@@ -182,8 +178,8 @@ const app = Vue.createApp({
             if(this.wonGameStatus == false) {
                 clearInterval(this.counter);
                 document.getElementById("dark-bg").classList.toggle("d-none");
-                document.getElementsByClassName("on-screen")[0].classList.add("d-none");
-                document.getElementsByClassName("on-screen")[1].classList.remove("d-none");
+                this.onScreen[0].classList.add("d-none");
+                this.onScreen[1].classList.remove("d-none");
                 this.wonGameStatus = true;
             }
         },
@@ -195,6 +191,7 @@ const app = Vue.createApp({
             }
             
         },
+        /** a function to find a function and retrieve the value */
         getCookie(cname) {
             var name = cname + "=";
             var ca = decodeURIComponent(document.cookie).split(';');
@@ -209,9 +206,10 @@ const app = Vue.createApp({
             }
             return "";
         },
-        setCookie(cname, cvalue, exdays) {
+        /** Makes a new cookie with a certain value */
+        setCookie(cname, cvalue) {
             var d = new Date();
-            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            d.setTime(d.getTime() + (7 * 24 * 60 * 60 * 1000));
             var expires = "expires="+d.toUTCString();
             document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
         }

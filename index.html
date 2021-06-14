@@ -22,12 +22,20 @@
         <div class="on-screen d-none">
             <h1>Gefeliciteerd!</h1>
             <p>U heeft de quiz in {{ time }} gehaald met {{ score }} punten!<br><br>Deel uw score nu online!. <p>
-            <img class="share-button" src="img/tweet.jpg" alt="tweet" @click="shareButton('tweet')"><button @click="resetGame">Opnieuw spelen</button>
+            <img class="share-button" src="img/tweet.jpg" alt="tweet" @click="shareButton('tweet')"><button @click="resetGame" id="bottomBtn">Opnieuw spelen</button>
+        </div>
+    </div>
+    <div id="itemContainer">
+        <div><p>Score: {{ score }}</p><p>Tijd: {{ time }}</p></div>
+        <div>
+            <button @click="resetGame">Reset</button>
+            <button @click="toggleTutorial">Bekijk Regels</button>
+            <button><a href="testscript.html">Bekijk Documentatie</a></button>
+            <button onclick="coole_ai()">Laag IQ modus</button>
         </div>
     </div>
     <div id="container">
-        <div id="itemContainer"><div><p>Score: {{ score }}</p><p>Tijd: {{ time }}</p></div><div><button @click="resetGame">Reset</button><button @click="toggleTutorial">Bekijk Regels</button></div></div>
-        <div class="card" v-for="id in sorted" v-bind:id="id" @click="flipCard"></div>
+        <div class="card" v-for="id in randomizedCards" v-bind:id="id" @click="flipCard"></div>
     </div>
 </body>
 </html>
