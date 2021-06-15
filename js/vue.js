@@ -8,6 +8,7 @@ const app = Vue.createApp({
             onScreen: document.getElementsByClassName("on-screen"),
             flippedCards: [],
             removedCards: [],
+            sorted: [],
             counter: [],
             wonGameStatus: false,
             score: 0,
@@ -19,8 +20,16 @@ const app = Vue.createApp({
     created() {
         for(let i=0;i<pictures.length;i++){
             this.randomizedCards.push(i);
+            this.sorted.push(i)
         }
+        arr = {}
         this.shuffleCards(this.randomizedCards);
+
+        for(let i=0;i<pictures.length;i++){
+            arr[i] = pictures[this.randomizedCards[i]].type
+        }
+
+        console.log(arr);
 
         // Will use your saved data if it's available
         if(this.getCookie("save")){
@@ -144,6 +153,8 @@ const app = Vue.createApp({
                 document.getElementsByClassName("invis")[0].removeAttribute("style");
                 document.getElementsByClassName("invis")[0].classList.remove("invis");
             }
+            clearInterval(this.counter);
+            this.startCounter;
             this.shuffleCards(this.randomizedCards);
             this.removedCards = [];
             this.score = 0;
