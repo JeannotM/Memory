@@ -155,7 +155,6 @@ const app = Vue.createApp({
                 document.getElementsByClassName("invis")[0].classList.remove("invis");
             }
             clearInterval(this.counter);
-            this.startCounter;
             this.shuffleCards(this.randomizedCards);
             this.removedCards = [];
             this.score = 0;
@@ -165,6 +164,7 @@ const app = Vue.createApp({
             this.onScreen[1].classList.add("d-none");
             document.getElementById("dark-bg").classList.add("d-none");
             this.wonGameStatus = false;
+            this.startCounter();
         },
         /** Adds 1 second to the timer every second, also saves a cookie with save data */
         startCounter(){
