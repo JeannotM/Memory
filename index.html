@@ -32,10 +32,11 @@
             <button @click="toggleTutorial">Bekijk Regels</button>
             <button><a href="testscript.html">Bekijk Documentatie</a></button>
             <button onclick="coole_ai()">Laag IQ modus</button>
+            <button @click="consoleLogAnswers">console.log kaarten</button>
         </div>
     </div>
     <div id="container">
-        <div class="card" v-for="id in sorted" v-bind:id="id" @click="flipCard"></div>
+        <div class="card" v-for="id in randomizedCards" v-bind:id="id" @click="flipCard"></div>
     </div>
 </body>
 </html>
