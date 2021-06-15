@@ -49,6 +49,7 @@ const app = Vue.createApp({
     methods: {
         /** Unflip all the cards, clear the arrays and give an error message */
         unflipAllCards() {
+            // the staircase of Timeouts was made so the animations run smoothly and removes all classes afterwards
             while(document.getElementsByClassName("flipped").length > 0) {
                 let item = document.getElementsByClassName("flipped")[0];
                 item.classList.remove("flipped");
@@ -58,8 +59,8 @@ const app = Vue.createApp({
                         item.removeAttribute("style");
                         setTimeout(function () {
                             item.classList.remove("unflip");
-                        }, 150)
-                    }, 150)
+                        }, 150);
+                    }, 150);
                 }, 50);
             }
             if(this.score > 0){ this.score -= 1; }
@@ -96,6 +97,8 @@ const app = Vue.createApp({
                         this.unflipAllCards();
                         return;
                     }
+
+                    // to remove the chosen cards from the game
                     while(document.getElementsByClassName("flipped").length > 0) {
                         this.removedCards.push(document.getElementsByClassName("flipped")[0].getAttribute("id"));
                         document.getElementsByClassName("flipped")[0].classList.add("invis");
@@ -113,6 +116,7 @@ const app = Vue.createApp({
         /** Sends a random message */
         randomMessage(won) {
             var self = this;
+
             // Timeout is used so it doesn't feel to weird after getting a wrong combination
             setTimeout(function() {
                 if(won) {
@@ -121,12 +125,14 @@ const app = Vue.createApp({
                     msgWindow.textContent = self.error[parseInt(self.error.length * Math.random())];
                 }
 
+                // To display and remove the window with a custom message
                 msgWindow.classList.add("active"), 
                 setTimeout(function () { 
                     msgWindow.classList.remove("active"); 
                 }, 1100); 
             }, 200);
         },
+        /** Shuffles the given array */
         shuffleCards(a) {
             for(let i=a.length-1;i>0;i--){
                 const j = Math.floor(Math.random() * (i + 1));
@@ -168,6 +174,7 @@ const app = Vue.createApp({
                 } else if (self.seconds < 10) {
                     self.seconds = "0" + self.seconds;
                 }
+                // Saves the cookie with all the game data
                 self.setCookie("save", btoa(JSON.stringify({
                     "score": self.score,
                     "seconds": self.seconds,
@@ -225,12 +232,12 @@ const app = Vue.createApp({
         },
         /** console.logs the right cards */
         consoleLogAnswers(){
-            var arr = {}
+            var arr = {};
             var cls = document.getElementsByClassName("card");
             for(let i=0;i<pictures.length;i++){
-                arr[i] = pictures[this.randomizedCards[cls[i].getAttribute("id")]].type
+                arr[i] = pictures[this.randomizedCards[cls[i].getAttribute("id")]].type;
             }
-            console.log(arr);   
+            console.log(arr);
         }
     }
 });
