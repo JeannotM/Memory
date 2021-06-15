@@ -25,11 +25,7 @@ const app = Vue.createApp({
         arr = {}
         this.shuffleCards(this.randomizedCards);
 
-        for(let i=0;i<pictures.length;i++){
-            arr[i] = pictures[this.randomizedCards[i]].type
-        }
-
-        console.log(arr);
+        
 
         // Will use your saved data if it's available
         if(this.getCookie("save")){
@@ -49,6 +45,11 @@ const app = Vue.createApp({
             }, 100);
         }
         this.startCounter();
+        for(let i=0;i<pictures.length;i++){
+            arr[i] = pictures[this.randomizedCards[i]].type
+        }
+
+        console.log(arr);
     },
     computed: {
         time() {
